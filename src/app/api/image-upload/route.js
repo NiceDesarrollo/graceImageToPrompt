@@ -48,7 +48,7 @@ export async function POST(request) {
   const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
   const prompt =
-    "Provide me a description of this image: Describe it in a beautifully way and make me feel the love";
+    "Provide me a description of this image: Describe it in a beautifully and lovely way";
   
     const imageParts = [await blobToGenerativePart(ImageRequestFile, imageType)];
 
