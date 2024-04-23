@@ -48,24 +48,37 @@ export async function POST(request) {
   const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
 
   const prompt =
-    "Give me a prompt to generate a romanticized description of a jewelry image, specifying the type of jewelry such as earrings, hoop earrings, necklaces, bracelets, bangles, chains, rings, or brooches, whether they have charms. give me the colors using the HTML color table names, and what metal they are made of, whether gold or platinum.  It should provide a description that captivates the audience into purchasing the jewelry."
+    "Generate a romanticized description of a jewelry image in both English (preceded by **English prompt:**) and Spanish (preceded by **Spanish prompt:**). The description should specify the type of jewelry such as earrings, hoop earrings, necklaces, bracelets, bangles, chains, rings, or brooches, whether they have charms, the colors using HTML color table names, and what metal they are made of, whether gold or platinum. The description should captivate the audience and encourage them to purchase the jewelry.";
 
   const imageParts = [await blobToGenerativePart(ImageRequestFile, imageType)];
 
   const result = await model.generateContent([prompt, ...imageParts]);
   const response = await result.response;
   const text = response.text();
+  let responsejson = {};
 
-  // For text-only input, use the gemini-pro model
-  // const modelForText = genAI.getGenerativeModel({ model: "gemini-pro" });
-  // const promptForText = "Do you can translate this text to spanish?: " + text;
-  // const resultForText = await modelForText.generateContent(promptForText);
-  // console.log(resultForText.response.text())
-  // const responseForText = await resultForText.response;
-  // const textForText = responseForText.text();
+  if (text) {
+    
+    responsejson = { message: text };
 
-  return NextResponse.json(
-    { message: text },
-    { status: 200 }
-  );
+    if (
+      text.includes("**English prompt:**") &&
+      text.includes("**Spanish prompt:**")
+    ) {
+      let splitText = text.split("**Spanish prompt:**");
+
+      let englishPrompt = splitText[0]
+        .replace("**English prompt:**", "")
+        .trim();
+      let spanishPrompt = splitText[1].trim();
+
+      responsejson = { message: englishPrompt, spanishMessage: spanishPrompt };
+
+      // console.log({ englishPrompt, spanishPrompt }); // English text
+    }
+  }else{
+    return NextResponse.json({ message: "Try it again" }, { status: 400 });
+  }
+
+  return NextResponse.json(responsejson, { status: 200 });
 }

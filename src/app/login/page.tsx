@@ -116,7 +116,6 @@ function Page() {
                     callbackUrl: "/dashboard",
                     redirect: false,
                   });
-                  console.log(result);
                 }}
               >
                 <svg

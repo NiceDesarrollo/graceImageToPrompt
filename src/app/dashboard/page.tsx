@@ -8,11 +8,16 @@ import {
 } from "@heroicons/react/24/outline";
 
 function DashboardPage() {
+  
   const [imageForm, setImageForm] = useState<File | null | Blob>(null);
   const [image, setImage] = useState<string | ArrayBuffer | null>(null);
   const [textResponse, setTextResponse] = useState<string | null>(null);
+  const [textResponseSpanish, setTextResponseSpanish] = useState<string | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [isCopyText, setIsCopyText] = useState<boolean>(false);
+  const [isCopySpanishText, setIsCopySpanishText] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +38,7 @@ function DashboardPage() {
     e.preventDefault();
 
     setTextResponse(null);
+    setTextResponseSpanish(null);
     setError(null);
     setLoading(true);
 
@@ -55,9 +61,16 @@ function DashboardPage() {
     if (response?.ok) {
       const data = await response.json();
       const message = data.message as string;
+      const spanishMessage = data.spanishMessage as string;
 
       setTextResponse(message);
-      console.log("Message response:", message);
+      setTextResponseSpanish(spanishMessage);
+      // console.log(
+      //   "Message response:",
+      //   message,
+      //   "Spanish message response:",
+      //   message
+      // );
     } else {
       const data = await response.json();
       const message = data.message as string;
@@ -71,7 +84,6 @@ function DashboardPage() {
       if (textResponse) {
         await navigator.clipboard.writeText(textResponse);
         setIsCopyText(true);
-        console.log("Text copied to clipboard");
         setTimeout(() => setIsCopyText(false), 2000);
       }
     } catch (err) {
@@ -79,7 +91,17 @@ function DashboardPage() {
     }
   };
 
-  
+  const handleCopySpanish = async () => {
+    try {
+      if (textResponseSpanish) {
+        await navigator.clipboard.writeText(textResponseSpanish);
+        setIsCopySpanishText(true);
+        setTimeout(() => setIsCopySpanishText(false), 2000);
+      }
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
 
   return (
     <>
@@ -166,6 +188,7 @@ function DashboardPage() {
                               alt="freepik image"
                               height={300}
                               width={300}
+                              priority
                             />
                           </div>
                           {!image && (
@@ -198,44 +221,85 @@ function DashboardPage() {
                     {loading ? (
                       <div>Loading...</div> // This is your loading indicator
                     ) : (
-                      textResponse && (
-                        <div className="border rounded shadow p-5 flex justify-between">
-                          <div>
-                            <h2 className="mt-5 text-3xl font-bold text-gray-900">
-                              Description:
-                            </h2>
-                            <p>{textResponse}</p>
-                          </div>
+                      <>
+                        {textResponse && (
+                          <div className="border rounded shadow p-5 flex justify-between">
+                            <div>
+                              <h2 className="mt-5 text-3xl font-bold text-gray-900">
+                                Description:
+                              </h2>
+                              <p>{textResponse}</p>
+                            </div>
 
-                          <button
-                            type="button"
-                            className="-m-2.5 inline-flex justify-end rounded-md p-2.5 text-gray-700 border h-12"
-                            onClick={handleCopy}
-                          >
-                            <span className="sr-only">Copy to clipboard</span>
-                            {isCopyText ? (
-                              <>
-                                {" "}
-                                <CheckIcon
-                                  className="h-6 w-6"
-                                  aria-hidden="true"
-                                />
-                                <div className="absolute bg-white border p-2 mt-10 rounded shadow-lg">
-                                  Copied to clipboard!
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                {" "}
-                                <ClipboardDocumentListIcon
-                                  className="h-6 w-6"
-                                  aria-hidden="true"
-                                />
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      )
+                            <button
+                              type="button"
+                              className="-m-2.5 inline-flex justify-end rounded-md p-2.5 text-gray-700 border h-12"
+                              onClick={handleCopy}
+                            >
+                              <span className="sr-only">Copy to clipboard</span>
+                              {isCopyText ? (
+                                <>
+                                  {" "}
+                                  <CheckIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
+                                  <div className="absolute bg-white border p-2 mt-10 rounded shadow-lg">
+                                    Copied to clipboard!
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  {" "}
+                                  <ClipboardDocumentListIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        )}
+
+                        {textResponseSpanish && (
+                          <div className="border rounded shadow p-5 flex justify-between mt-5">
+                            <div>
+                              <h2 className="mt-5 text-3xl font-bold text-gray-900">
+                                Descripción:
+                              </h2>
+                              <p>{textResponseSpanish}</p>
+                            </div>
+
+                            <button
+                              type="button"
+                              className="-m-2.5 inline-flex justify-end rounded-md p-2.5 text-gray-700 border h-12"
+                              onClick={handleCopySpanish}
+                            >
+                              <span className="sr-only">Copy to clipboard</span>
+                              {isCopySpanishText ? (
+                                <>
+                                  {" "}
+                                  <CheckIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
+                                  <div className="absolute bg-white border p-2 mt-10 rounded shadow-lg">
+                                    Copied to clipboard!
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  {" "}
+                                  <ClipboardDocumentListIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                   <div>
