@@ -8,7 +8,6 @@ import {
 } from "@heroicons/react/24/outline";
 
 function DashboardPage() {
-  
   const [imageForm, setImageForm] = useState<File | null | Blob>(null);
   const [image, setImage] = useState<string | ArrayBuffer | null>(null);
   const [textResponse, setTextResponse] = useState<string | null>(null);
