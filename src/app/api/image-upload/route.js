@@ -11,6 +11,12 @@ export async function POST(request) {
 
   const data = await request.formData();
   const imageType = data.get("image").type || "";
+  const imageSize = data.get("image").size || "";
+
+  if (imageSize > 4000000) {
+    return NextResponse.json({ message: "The image cannot exceed 4MB." }, { status: 400 });
+  }
+
   const ImageRequestFile = data.get("image");
 
   let imageExtension = imageType.split("/");
@@ -56,6 +62,10 @@ export async function POST(request) {
   const response = await result.response;
   const text = response.text();
   let responsejson = {};
+
+  if (response?.candidates[0]?.finishReason === 'OTHER') {
+    return NextResponse.json({ message: "An external error has occurred." }, { status: 400 });
+  }
 
   if (text) {
     
