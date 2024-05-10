@@ -55,15 +55,34 @@ function DashboardPage() {
       body: formData, // send formData instead of JSON
     });
 
-    setLoading(false);
 
     if (response?.ok) {
       const data = await response.json();
       const message = data.message as string;
-      const spanishMessage = data.spanishMessage as string;
-
       setTextResponse(message);
-      setTextResponseSpanish(spanishMessage);
+
+      if (message) {
+        // Fetch request
+        const responseSpanish = await fetch("/api/translate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: message,
+          }),
+        });
+
+        const dataSpanish = await responseSpanish.json();
+
+        if (responseSpanish?.ok) {
+          const messageSpanish = dataSpanish.message as string;
+          setTextResponseSpanish(messageSpanish);
+        }
+      }
+
+    setLoading(false);
+
       // console.log(
       //   "Message response:",
       //   message,
@@ -224,10 +243,12 @@ function DashboardPage() {
                         {textResponse && (
                           <div className="border rounded shadow p-5 flex justify-between">
                             <div>
-                              <h2 className="mt-5 text-3xl font-bold text-gray-900">
+                              <h2 className="mt-5 text-3xl font-bold text-gray-900 mb-5">
                                 Description:
                               </h2>
-                              <p>{textResponse}</p>
+                              <p style={{ whiteSpace: "pre-wrap" }}>
+                                {textResponse}
+                              </p>
                             </div>
 
                             <button
@@ -263,10 +284,10 @@ function DashboardPage() {
                         {textResponseSpanish && (
                           <div className="border rounded shadow p-5 flex justify-between mt-5">
                             <div>
-                              <h2 className="mt-5 text-3xl font-bold text-gray-900">
+                              <h2 className="mt-5 text-3xl font-bold text-gray-900 mb-5">
                                 Descripción:
                               </h2>
-                              <p>{textResponseSpanish}</p>
+                              <p style={{ whiteSpace: "pre-wrap" }}>{textResponseSpanish}</p>
                             </div>
 
                             <button
