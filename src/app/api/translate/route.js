@@ -3,6 +3,9 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
+  // Wait for 1 second before processing the request
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   const body = await request.text();
 
   // Convertir la cadena de texto a un objeto
@@ -61,10 +64,17 @@ export async function POST(request) {
   const text = response.text();
 
   if (response?.candidates[0]?.finishReason === "OTHER") {
-    return NextResponse.json(
-      { message: "An external error has occurred." },
-      { status: 400 }
-    );
+    
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    if (response?.candidates[0]?.finishReason === "OTHER") {
+      return NextResponse.json(
+        { message: "An external error has occurred." },
+        { status: 400 }
+      );
+    }
   }
 
   return NextResponse.json({ message: text }, { status: 200 });
