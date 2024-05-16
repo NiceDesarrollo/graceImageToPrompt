@@ -89,7 +89,7 @@ export async function POST(request) {
   // const prompt =
   //   "Imagine you are a senior copywriter working for the best jewelry company and the best marketing boss will review you work so you need to generate a romanticized description of a jewelry image in both English (preceded by **English prompt:**) and Spanish (preceded by **Spanish prompt:**). The description should specify the type of jewelry such as earrings, hoop earrings, necklaces, bracelets, bangles, chains, rings, or brooches, whether they have charms, the colors using HTML color table names, and what metal they are made of, whether gold or platinum. The description should captivate the audience and encourage them to purchase the jewelry. ";
   const prompt =
-    "Generate a romanticized description of a jewelry picture. The description should specify the type of jewelry, the colors using HTML color table names, and what metal they are made of, whether gold-plated 18k or platinum-plated. The description should captivate the audience and encourage them to purchase the jewelry. Write 3 different descriptions but from others perspective, use different words for each option.";
+    "Generate a worn description of a jewelry picture. The description should specify the type of jewelry, the colors using HTML color table names, and what metal they are made of, whether gold-plated 18k or platinum-plated. The description should captivate the audience and encourage them to purchase the jewelry. Write 3 different descriptions but from others perspective, use different words for each option.";
 
   const imageParts = [await blobToGenerativePart(ImageRequestFile, imageType)];
 
